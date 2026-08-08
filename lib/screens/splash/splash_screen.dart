@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../home/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -42,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const _SplashFinishedScreen(),
+          builder: (_) => const HomeScreen(),
         ),
       );
     });
@@ -86,9 +87,7 @@ class _SplashScreenState extends State<SplashScreen>
                     size: 72,
                   ),
                 ),
-
                 const SizedBox(height: 28),
-
                 const Text(
                   'THE OG CRICKET',
                   style: TextStyle(
@@ -98,9 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
                     letterSpacing: 2.5,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
                   'THE GAME STARTS HERE',
                   style: TextStyle(
@@ -110,9 +107,7 @@ class _SplashScreenState extends State<SplashScreen>
                     letterSpacing: 2,
                   ),
                 ),
-
                 const SizedBox(height: 35),
-
                 SizedBox(
                   width: 180,
                   child: LinearProgressIndicator(
@@ -125,26 +120,6 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SplashFinishedScreen extends StatelessWidget {
-  const _SplashFinishedScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundBlack,
-      body: Center(
-        child: Text(
-          'THE OG CRICKET',
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-            color: AppTheme.primaryGold,
-            letterSpacing: 2,
           ),
         ),
       ),
