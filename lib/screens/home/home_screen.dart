@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../core/theme/app_theme.dart';
+import '../tournament/tournament_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -184,17 +186,11 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildTopBar(),
-
                 const SizedBox(height: 25),
-
                 _buildWelcomeSection(),
-
                 const SizedBox(height: 25),
-
                 _buildMenuGrid(),
-
                 const SizedBox(height: 25),
-
                 _buildBottomBanner(),
               ],
             ),
@@ -217,7 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 14,
@@ -226,9 +221,6 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             color: AppTheme.surfaceBlack,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.06),
-            ),
           ),
           child: const Row(
             children: [
@@ -247,9 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-
         const SizedBox(width: 12),
-
         Container(
           width: 42,
           height: 42,
@@ -277,32 +267,21 @@ class _HomeScreenState extends State<HomeScreen> {
             AppTheme.primaryGold.withOpacity(0.18),
             AppTheme.surfaceBlack,
           ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        border: Border.all(
-          color: AppTheme.primaryGold.withOpacity(0.12),
         ),
       ),
-      child: Row(
+      child: const Row(
         children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppTheme.primaryGold,
-            ),
-            child: const Icon(
+          CircleAvatar(
+            radius: 36,
+            backgroundColor: AppTheme.primaryGold,
+            child: Icon(
               Icons.person_rounded,
               color: Colors.black,
               size: 40,
             ),
           ),
-
-          const SizedBox(width: 18),
-
-          const Expanded(
+          SizedBox(width: 18),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -323,12 +302,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-          ),
-
-          const Icon(
-            Icons.arrow_forward_ios_rounded,
-            color: AppTheme.primaryGold,
-            size: 18,
           ),
         ],
       ),
@@ -351,9 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return _buildGameCard(
           item: item,
-          onTap: () {
-            _showComingSoon(item.title);
-          },
+          onTap: () => _handleMenuTap(index, item.title),
         );
       },
     );
@@ -395,9 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   size: 27,
                 ),
               ),
-
               const SizedBox(width: 14),
-
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -410,7 +379,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -426,7 +394,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-
               const Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
@@ -435,6 +402,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _handleMenuTap(int index, String title) {
+    if (index == 2) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const TournamentSelectionScreen(),
+        ),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$title is coming soon!'),
+        backgroundColor: AppTheme.surfaceBlack,
       ),
     );
   }
@@ -475,16 +460,6 @@ class _HomeScreenState extends State<HomeScreen> {
             size: 18,
           ),
         ],
-      ),
-    );
-  }
-
-  void _showComingSoon(String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature is coming soon!'),
-        duration: const Duration(seconds: 2),
-        backgroundColor: AppTheme.surfaceBlack,
       ),
     );
   }
