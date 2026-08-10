@@ -1,22 +1,5 @@
 import 'package:flutter/material.dart';
-
-class SquadPlayer {
-  final String name;
-  final String role;
-  final int batting;
-  final int bowling;
-  final int fielding;
-  final String bowlingType;
-
-  const SquadPlayer({
-    required this.name,
-    required this.role,
-    required this.batting,
-    required this.bowling,
-    required this.fielding,
-    required this.bowlingType,
-  });
-}
+import '../../data/team_squad_catalog.dart';
 
 class SquadSelectionScreen extends StatefulWidget {
   final String teamName;
@@ -33,182 +16,35 @@ class SquadSelectionScreen extends StatefulWidget {
 
 class _SquadSelectionScreenState
     extends State<SquadSelectionScreen> {
-  late List<SquadPlayer> players;
-  final List<SquadPlayer> selectedPlayers = [];
+  late List<CricketPlayer> players;
+  final List<CricketPlayer> selectedPlayers = [];
 
   @override
   void initState() {
     super.initState();
-    players = _getPlayers(widget.teamName);
-
-    // Default Final XI
-    selectedPlayers.addAll(
-      players.take(players.length >= 11 ? 11 : players.length),
-    );
+    _loadSquad(widget.teamName);
   }
 
-  List<SquadPlayer> _getPlayers(String team) {
-    // The catalog is intentionally expandable.
-    // Add complete squads here without changing the UI.
-    const commonInternational = <SquadPlayer>[
-      SquadPlayer(
-        name: 'A. Sharma',
-        role: 'All Rounder',
-        batting: 88,
-        bowling: 76,
-        fielding: 86,
-        bowlingType: 'Left Arm Spin',
-      ),
-      SquadPlayer(
-        name: 'R. Sharma',
-        role: 'Batter',
-        batting: 91,
-        bowling: 30,
-        fielding: 82,
-        bowlingType: 'Off Break',
-      ),
-      SquadPlayer(
-        name: 'V. Kohli',
-        role: 'Batter',
-        batting: 94,
-        bowling: 28,
-        fielding: 90,
-        bowlingType: 'Medium',
-      ),
-      SquadPlayer(
-        name: 'S. Yadav',
-        role: 'Batter',
-        batting: 92,
-        bowling: 42,
-        fielding: 88,
-        bowlingType: 'Off Break',
-      ),
-      SquadPlayer(
-        name: 'S. Gill',
-        role: 'Batter',
-        batting: 89,
-        bowling: 20,
-        fielding: 84,
-        bowlingType: 'None',
-      ),
-      SquadPlayer(
-        name: 'R. Pant',
-        role: 'Wicket Keeper',
-        batting: 88,
-        bowling: 18,
-        fielding: 92,
-        bowlingType: 'None',
-      ),
-      SquadPlayer(
-        name: 'H. Pandya',
-        role: 'All Rounder',
-        batting: 86,
-        bowling: 82,
-        fielding: 87,
-        bowlingType: 'Medium Fast',
-      ),
-      SquadPlayer(
-        name: 'R. Jadeja',
-        role: 'All Rounder',
-        batting: 82,
-        bowling: 89,
-        fielding: 95,
-        bowlingType: 'Left Arm Spin',
-      ),
-      SquadPlayer(
-        name: 'A. Patel',
-        role: 'All Rounder',
-        batting: 80,
-        bowling: 84,
-        fielding: 86,
-        bowlingType: 'Left Arm Spin',
-      ),
-      SquadPlayer(
-        name: 'K. Yadav',
-        role: 'Bowler',
-        batting: 48,
-        bowling: 91,
-        fielding: 82,
-        bowlingType: 'Left Arm Spin',
-      ),
-      SquadPlayer(
-        name: 'J. Bumrah',
-        role: 'Bowler',
-        batting: 35,
-        bowling: 96,
-        fielding: 88,
-        bowlingType: 'Fast',
-      ),
-      SquadPlayer(
-        name: 'M. Siraj',
-        role: 'Bowler',
-        batting: 30,
-        bowling: 87,
-        fielding: 82,
-        bowlingType: 'Fast',
-      ),
-      SquadPlayer(
-        name: 'A. Singh',
-        role: 'Bowler',
-        batting: 32,
-        bowling: 86,
-        fielding: 84,
-        bowlingType: 'Left Arm Fast',
-      ),
-      SquadPlayer(
-        name: 'S. Samson',
-        role: 'Wicket Keeper',
-        batting: 86,
-        bowling: 15,
-        fielding: 90,
-        bowlingType: 'None',
-      ),
-      SquadPlayer(
-        name: 'I. Kishan',
-        role: 'Wicket Keeper',
-        batting: 83,
-        bowling: 12,
-        fielding: 87,
-        bowlingType: 'None',
-      ),
-      SquadPlayer(
-        name: 'R. Gaikwad',
-        role: 'Batter',
-        batting: 84,
-        bowling: 18,
-        fielding: 85,
-        bowlingType: 'None',
-      ),
-      SquadPlayer(
-        name: 'S. Dube',
-        role: 'All Rounder',
-        batting: 82,
-        bowling: 65,
-        fielding: 78,
-        bowlingType: 'Medium',
-      ),
-      SquadPlayer(
-        name: 'K. Rahul',
-        role: 'Wicket Keeper',
-        batting: 87,
-        bowling: 10,
-        fielding: 86,
-        bowlingType: 'None',
-      ),
-    ];
+  void _loadSquad(String teamName) {
+    players = TeamSquadCatalog.getSquad(teamName);
 
-    // For now the complete expandable squad structure is shared
-    // across the screen. Team-specific catalogs will be connected
-    // in the next data layer.
-    return List<SquadPlayer>.from(commonInternational);
+    selectedPlayers.clear();
+
+    if (players.length >= 11) {
+      selectedPlayers.addAll(players.take(11));
+    } else {
+      selectedPlayers.addAll(players);
+    }
   }
 
-  void _togglePlayer(SquadPlayer player) {
+  void _togglePlayer(CricketPlayer player) {
     setState(() {
       if (selectedPlayers.contains(player)) {
         selectedPlayers.remove(player);
-      } else if (selectedPlayers.length < 11) {
-        selectedPlayers.add(player);
+      } else {
+        if (selectedPlayers.length < 11) {
+          selectedPlayers.add(player);
+        }
       }
     });
   }
@@ -216,22 +52,22 @@ class _SquadSelectionScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF07111F),
+      backgroundColor: const Color(0xFF06101D),
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            _header(),
             Expanded(
               child: Row(
                 children: [
                   Expanded(
                     flex: 7,
-                    child: _buildPlayerList(),
+                    child: _playerList(),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     flex: 3,
-                    child: _buildFinalXI(),
+                    child: _finalXI(),
                   ),
                 ],
               ),
@@ -242,187 +78,112 @@ class _SquadSelectionScreenState
     );
   }
 
-  Widget _buildHeader() {
+  Widget _header() {
     return Container(
-      height: 72,
-      margin: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-      padding: const EdgeInsets.symmetric(horizontal: 22),
+      height: 70,
+      margin: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFF172B3D),
+        color: const Color(0xFF12283A),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFF314B60),
+          color: const Color(0xFF2C4B62),
         ),
       ),
       child: Row(
         children: [
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 8),
           const Text(
-            'SQUAD SELECTION',
+            'SQUAD',
             style: TextStyle(
               color: Color(0xFF00E5D4),
-              fontSize: 25,
+              fontSize: 24,
               fontWeight: FontWeight.w900,
-              letterSpacing: 1.4,
+              letterSpacing: 1.5,
             ),
           ),
-          const Spacer(),
-          Text(
-            widget.teamName.toUpperCase(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(width: 25),
+          const SizedBox(width: 20),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF6B00),
-              borderRadius: BorderRadius.circular(5),
-            ),
+            height: 28,
+            width: 2,
+            color: const Color(0xFFFF6B00),
+          ),
+          const SizedBox(width: 18),
+          Expanded(
             child: Text(
-              '${selectedPlayers.length}/11 SELECTED',
+              widget.teamName,
               style: const TextStyle(
                 color: Colors.white,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          _counter(),
         ],
       ),
     );
   }
 
-  Widget _buildPlayerList() {
+  Widget _counter() {
     return Container(
-      margin: const EdgeInsets.only(left: 16, bottom: 16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 18,
+        vertical: 9,
+      ),
       decoration: BoxDecoration(
-        color: const Color(0xFF101F30),
+        color: selectedPlayers.length == 11
+            ? const Color(0xFF087F73)
+            : const Color(0xFF24394B),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        '${selectedPlayers.length} / 11',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+
+  Widget _playerList() {
+    return Container(
+      margin: const EdgeInsets.only(
+        left: 14,
+        bottom: 14,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0E1D2C),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFF294258),
+          color: const Color(0xFF294359),
         ),
       ),
       child: Column(
         children: [
-          Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            color: const Color(0xFF0D4B68),
-            child: const Row(
-              children: [
-                SizedBox(
-                  width: 220,
-                  child: Text(
-                    'NAME',
-                    style: _headerStyle,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'ROLE',
-                    style: _headerStyle,
-                  ),
-                ),
-                SizedBox(
-                  width: 65,
-                  child: Text(
-                    'BAT',
-                    style: _headerStyle,
-                  ),
-                ),
-                SizedBox(
-                  width: 65,
-                  child: Text(
-                    'BOWL',
-                    style: _headerStyle,
-                  ),
-                ),
-                SizedBox(
-                  width: 65,
-                  child: Text(
-                    'FIELD',
-                    style: _headerStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _tableHeader(),
           Expanded(
-            child: ListView.builder(
+            child: players.isEmpty
+                ? _emptySquad()
+                : ListView.builder(
+              padding: const EdgeInsets.symmetric(
+                vertical: 6,
+              ),
               itemCount: players.length,
               itemBuilder: (context, index) {
-                final player = players[index];
-                final selected =
-                selectedPlayers.contains(player);
-
-                return InkWell(
-                  onTap: () => _togglePlayer(player),
-                  child: Container(
-                    height: 52,
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? const Color(0xFFFF6B00)
-                          : const Color(0xFF182A3B),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 210,
-                          child: Row(
-                            children: [
-                              Icon(
-                                selected
-                                    ? Icons.check_circle
-                                    : Icons.radio_button_unchecked,
-                                color: selected
-                                    ? Colors.white
-                                    : const Color(0xFF71879A),
-                                size: 19,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  player.name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            player.role,
-                            style: TextStyle(
-                              color: selected
-                                  ? Colors.white
-                                  : const Color(0xFFB7C7D6),
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                        _rating(player.batting, selected),
-                        _rating(player.bowling, selected),
-                        _rating(player.fielding, selected),
-                      ],
-                    ),
-                  ),
+                return _playerTile(
+                  players[index],
+                  index,
                 );
               },
             ),
@@ -432,133 +193,326 @@ class _SquadSelectionScreenState
     );
   }
 
-  Widget _rating(int value, bool selected) {
-    return SizedBox(
-      width: 65,
-      child: Text(
-        '$value',
-        style: TextStyle(
+  Widget _tableHeader() {
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+      ),
+      decoration: const BoxDecoration(
+        color: Color(0xFF0B4A66),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+      ),
+      child: const Row(
+        children: [
+          SizedBox(width: 35),
+          Expanded(
+            flex: 4,
+            child: Text(
+              'PLAYER',
+              style: _headerText,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              'ROLE',
+              style: _headerText,
+            ),
+          ),
+          SizedBox(
+            width: 65,
+            child: Text(
+              'STATUS',
+              style: _headerText,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _playerTile(
+      CricketPlayer player,
+      int index,
+      ) {
+    final bool selected =
+    selectedPlayers.contains(player);
+
+    return GestureDetector(
+      onTap: () => _togglePlayer(player),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        height: 58,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 2,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+        ),
+        decoration: BoxDecoration(
           color: selected
-              ? Colors.white
-              : const Color(0xFF00E5D4),
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
+              ? const Color(0xFFFF6B00)
+              : const Color(0xFF16293A),
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color: selected
+                ? const Color(0xFFFF8A32)
+                : Colors.transparent,
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 35,
+              child: Text(
+                '${index + 1}',
+                style: TextStyle(
+                  color: selected
+                      ? Colors.white
+                      : const Color(0xFF6F8497),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 4,
+              child: Row(
+                children: [
+                  Icon(
+                    selected
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    size: 20,
+                    color: selected
+                        ? Colors.white
+                        : const Color(0xFF60788B),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      player.name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                player.role,
+                style: TextStyle(
+                  color: selected
+                      ? Colors.white
+                      : const Color(0xFFAAB9C6),
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 65,
+              child: Text(
+                selected ? 'XI' : 'BENCH',
+                style: TextStyle(
+                  color: selected
+                      ? Colors.white
+                      : const Color(0xFF71879A),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildFinalXI() {
+  Widget _finalXI() {
     return Container(
-      margin: const EdgeInsets.only(right: 16, bottom: 16),
+      margin: const EdgeInsets.only(
+        right: 14,
+        bottom: 14,
+      ),
       decoration: BoxDecoration(
-        color: const Color(0xFF101F30),
+        color: const Color(0xFF0E1D2C),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFF294258),
+          color: const Color(0xFF294359),
         ),
       ),
       child: Column(
         children: [
           Container(
-            height: 48,
+            height: 46,
             width: double.infinity,
             alignment: Alignment.center,
-            color: const Color(0xFF0D4B68),
+            decoration: const BoxDecoration(
+              color: Color(0xFF0B4A66),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+            ),
             child: const Text(
-              'FINAL 11',
+              'PLAYING XI',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+          Expanded(
+            child: selectedPlayers.isEmpty
+                ? const Center(
+              child: Text(
+                'Select players',
+                style: TextStyle(
+                  color: Colors.white38,
+                ),
+              ),
+            )
+                : ListView.builder(
+              padding: const EdgeInsets.all(7),
+              itemCount: selectedPlayers.length,
+              itemBuilder: (context, index) {
+                final player =
+                selectedPlayers[index];
+
+                return _selectedPlayer(
+                  player,
+                  index,
+                );
+              },
+            ),
+          ),
+          _confirmButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _selectedPlayer(
+      CricketPlayer player,
+      int index,
+      ) {
+    return Container(
+      height: 42,
+      margin: const EdgeInsets.only(
+        bottom: 4,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF172A3B),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 25,
+            child: Text(
+              '${index + 1}',
+              style: const TextStyle(
+                color: Color(0xFFFF6B00),
                 fontWeight: FontWeight.w900,
               ),
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: selectedPlayers.length,
-              itemBuilder: (context, index) {
-                final player = selectedPlayers[index];
-
-                return Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF182A3B),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        '${index + 1}',
-                        style: const TextStyle(
-                          color: Color(0xFFFF6B00),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          player.name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => _togglePlayer(player),
-                        icon: const Icon(
-                          Icons.remove_circle_outline,
-                          color: Colors.white70,
-                          size: 19,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+            child: Text(
+              player.name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: SizedBox(
-              width: double.infinity,
-              height: 45,
-              child: ElevatedButton(
-                onPressed: selectedPlayers.length == 11
-                    ? () {}
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6B00),
-                  disabledBackgroundColor:
-                  const Color(0xFF263849),
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text(
-                  'CONFIRM SQUAD',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
+          InkWell(
+            onTap: () => _togglePlayer(player),
+            child: const Icon(
+              Icons.close,
+              color: Colors.white54,
+              size: 17,
             ),
           ),
         ],
       ),
     );
   }
+
+  Widget _confirmButton() {
+    final bool ready = selectedPlayers.length == 11;
+
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: SizedBox(
+        width: double.infinity,
+        height: 44,
+        child: ElevatedButton(
+          onPressed: ready
+              ? () {
+            Navigator.pop(
+              context,
+              selectedPlayers,
+            );
+          }
+              : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFF6B00),
+            disabledBackgroundColor:
+            const Color(0xFF263746),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          child: Text(
+            ready
+                ? 'CONFIRM PLAYING XI'
+                : 'SELECT ${11 - selectedPlayers.length} MORE',
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _emptySquad() {
+    return const Center(
+      child: Text(
+        'NO SQUAD DATA',
+        style: TextStyle(
+          color: Colors.white38,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
 }
 
-const TextStyle _headerStyle = TextStyle(
+const TextStyle _headerText = TextStyle(
   color: Colors.white,
+  fontSize: 11,
   fontWeight: FontWeight.w900,
-  fontSize: 12,
+  letterSpacing: 0.7,
 );
