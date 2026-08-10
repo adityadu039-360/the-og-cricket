@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/match_config.dart';
 
 class QuickPlaySettingsScreen extends StatefulWidget {
   final String homeTeam;
@@ -59,6 +60,20 @@ class _QuickPlaySettingsScreenState
     'Rajasthan Desert Stadium',
   ];
 
+  void _startMatch() {
+    final MatchConfig config = MatchConfig(
+      homeTeam: widget.homeTeam,
+      awayTeam: widget.awayTeam,
+      overs: selectedOvers,
+      difficulty: difficulty,
+      weather: weather,
+      rain: rain,
+      ground: ground,
+    );
+
+    Navigator.pop(context, config);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +104,8 @@ class _QuickPlaySettingsScreenState
                       _oversSection(),
                       const SizedBox(height: 18),
                       _settingsGrid(),
+                      const SizedBox(height: 24),
+                      _matchSummary(),
                       const SizedBox(height: 24),
                       _startMatchButton(),
                     ],
@@ -238,7 +255,7 @@ class _QuickPlaySettingsScreenState
       icon: Icons.timer_outlined,
       child: Row(
         children: overs.map((value) {
-          final selected = selectedOvers == value;
+          final bool selected = selectedOvers == value;
 
           return Expanded(
             child: Padding(
@@ -299,69 +316,65 @@ class _QuickPlaySettingsScreenState
   }
 
   Widget _settingsGrid() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _dropdownCard(
-                title: 'DIFFICULTY',
-                icon: Icons.sports_esports_outlined,
-                value: difficulty,
-                values: difficulties,
-                onChanged: (value) {
-                  setState(() {
-                    difficulty = value!;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _dropdownCard(
-                title: 'WEATHER',
-                icon: Icons.wb_sunny_outlined,
-                value: weather,
-                values: weathers,
-                onChanged: (value) {
-                  setState(() {
-                    weather = value!;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _dropdownCard(
-                title: 'RAIN',
-                icon: Icons.water_drop_outlined,
-                value: rain,
-                values: rainOptions,
-                onChanged: (value) {
-                  setState(() {
-                    rain = value!;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _dropdownCard(
-                title: 'GROUND',
-                icon: Icons.stadium_outlined,
-                value: ground,
-                values: grounds,
-                onChanged: (value) {
-                  setState(() {
-                    ground = value!;
-                  });
-                },
-              ),
-            ),
-          ],
-        );
-      },
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _dropdownCard(
+            title: 'DIFFICULTY',
+            icon: Icons.sports_esports_outlined,
+            value: difficulty,
+            values: difficulties,
+            onChanged: (value) {
+              setState(() {
+                difficulty = value!;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _dropdownCard(
+            title: 'WEATHER',
+            icon: Icons.wb_sunny_outlined,
+            value: weather,
+            values: weathers,
+            onChanged: (value) {
+              setState(() {
+                weather = value!;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _dropdownCard(
+            title: 'RAIN',
+            icon: Icons.water_drop_outlined,
+            value: rain,
+            values: rainOptions,
+            onChanged: (value) {
+              setState(() {
+                rain = value!;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _dropdownCard(
+            title: 'GROUND',
+            icon: Icons.stadium_outlined,
+            value: ground,
+            values: grounds,
+            onChanged: (value) {
+              setState(() {
+                ground = value!;
+              });
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -407,7 +420,7 @@ class _QuickPlaySettingsScreenState
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             isExpanded: true,
             dropdownColor: const Color(0xFF172D3F),
             style: const TextStyle(
@@ -429,7 +442,7 @@ class _QuickPlaySettingsScreenState
               ),
             ),
             items: values.map((item) {
-              return DropdownMenuItem(
+              return DropdownMenuItem<String>(
                 value: item,
                 child: Text(
                   item,
@@ -487,35 +500,93 @@ class _QuickPlaySettingsScreenState
     );
   }
 
+  Widget _matchSummary() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0D2030),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFF29475D),
+        ),
+      ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 28,
+        runSpacing: 10,
+        children: [
+          _summaryItem(
+            Icons.sports_cricket,
+            '$selectedOvers Overs',
+          ),
+          _summaryItem(
+            Icons.speed,
+            difficulty,
+          ),
+          _summaryItem(
+            Icons.cloud,
+            weather,
+          ),
+          _summaryItem(
+            Icons.water_drop,
+            'Rain: $rain',
+          ),
+          _summaryItem(
+            Icons.stadium,
+            ground,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _summaryItem(
+      IconData icon,
+      String text,
+      ) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          color: const Color(0xFF00E5D4),
+          size: 17,
+        ),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _startMatchButton() {
     return SizedBox(
       width: 360,
       height: 55,
-      child: ElevatedButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '$selectedOvers-over match configured',
-              ),
-              backgroundColor: const Color(0xFF087F73),
-            ),
-          );
-        },
+      child: ElevatedButton.icon(
+        onPressed: _startMatch,
+        icon: const Icon(Icons.play_arrow),
+        label: const Text(
+          'START MATCH',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.3,
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFFF6B00),
           foregroundColor: Colors.white,
           elevation: 8,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(7),
-          ),
-        ),
-        child: const Text(
-          'START MATCH',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.3,
           ),
         ),
       ),
