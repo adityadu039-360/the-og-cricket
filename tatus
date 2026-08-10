@@ -1,0 +1,20 @@
+[33md0e66b3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Connect home screen to tournament selection
+[33mce4d8bb[m Add tournament selection screen
+[33m296002f[m Add centralized cricket team catalog
+[33mbb5d223[m Add centralized tournament catalog
+[33m02a6d7c[m Configure Indian OG League 2026 tournament
+[33m9234da8[m Add reusable tournament model
+[33m1903edd[m Add World Cup tournament teams
+[33m666347e[m Add Indian OG League 2026 teams
+[33m862599f[m Add cricket team data model
+[33m9d94160[m Add core cricket game configuration
+[33meb89094[m Add centralized app routing
+[33mae00a16[m Add centralized app strings
+[33m98523ba[m Add centralized game constants
+[33m428ba1c[m Connect splash screen to app startup
+[33m41d46bb[m Add animated splash screen
+[33mae2b262[m Add landscape gaming orientation
+[33m47bd8f1[m Add The OG Cricket app theme
+[33mc6be10e[m Create The OG Cricket home screen
+[33mbb1ecdd[m Initial Flutter project setup
+[33m1d2b96d[m Initial commit
