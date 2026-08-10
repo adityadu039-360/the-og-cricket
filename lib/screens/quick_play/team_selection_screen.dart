@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'squad_selection_screen.dart';
+import 'quick_play_settings_screen.dart';
 
 class TeamSelectionScreen extends StatefulWidget {
   const TeamSelectionScreen({super.key});
@@ -50,7 +51,7 @@ class _TeamSelectionScreenState
   Future<void> _openSquad(bool isLeft) async {
     final team = isLeft ? leftTeam : rightTeam;
 
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => SquadSelectionScreen(
@@ -58,17 +59,18 @@ class _TeamSelectionScreenState
         ),
       ),
     );
+  }
 
-    if (result != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '${team.name}: Playing XI confirmed',
-          ),
-          backgroundColor: const Color(0xFF087F73),
+  void _openMatchSettings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => QuickPlaySettingsScreen(
+          homeTeam: leftTeam.name,
+          awayTeam: rightTeam.name,
         ),
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -95,6 +97,7 @@ class _TeamSelectionScreenState
               Expanded(
                 child: _selectionArea(),
               ),
+              _continueButton(),
             ],
           ),
         ),
@@ -202,33 +205,29 @@ class _TeamSelectionScreenState
   }
 
   Widget _selectionArea() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _teamCard(
-                    leftTeam,
-                    true,
-                  ),
-                ),
-                const SizedBox(width: 30),
-                _vs(),
-                const SizedBox(width: 30),
-                Expanded(
-                  child: _teamCard(
-                    rightTeam,
-                    false,
-                  ),
-                ),
-              ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Row(
+          children: [
+            Expanded(
+              child: _teamCard(
+                leftTeam,
+                true,
+              ),
             ),
-          ),
-        );
-      },
+            const SizedBox(width: 30),
+            _vs(),
+            const SizedBox(width: 30),
+            Expanded(
+              child: _teamCard(
+                rightTeam,
+                false,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -301,7 +300,7 @@ class _TeamSelectionScreenState
                   size: 32,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 5),
               OutlinedButton.icon(
                 onPressed: () => _openSquad(isLeft),
                 icon: const Icon(
@@ -322,7 +321,7 @@ class _TeamSelectionScreenState
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 5),
               IconButton(
                 onPressed: () => _changeTeam(isLeft, 1),
                 icon: const Icon(
@@ -408,7 +407,42 @@ class _TeamSelectionScreenState
     );
   }
 
-  void _changeTeam(bool isLeft, int direction) {
+  Widget _continueButton() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 18),
+      child: SizedBox(
+        width: 330,
+        height: 50,
+        child: ElevatedButton.icon(
+          onPressed: _openMatchSettings,
+          icon: const Icon(
+            Icons.arrow_forward,
+            size: 20,
+          ),
+          label: const Text(
+            'CONTINUE TO MATCH SETTINGS',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFF6B00),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _changeTeam(
+      bool isLeft,
+      int direction,
+      ) {
     setState(() {
       if (isLeft) {
         selectedLeft =
