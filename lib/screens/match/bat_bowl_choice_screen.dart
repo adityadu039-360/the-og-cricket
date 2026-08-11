@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/match_config.dart';
+import 'pre_match_screen.dart';
 
 class BatBowlChoiceScreen extends StatefulWidget {
   final MatchConfig config;
@@ -42,14 +43,17 @@ class _BatBowlChoiceScreenState
         ? otherTeam
         : widget.tossWinner;
 
-    Navigator.pop(
+    Navigator.push(
       context,
-      {
-        'tossWinner': widget.tossWinner,
-        'decision': selectedDecision,
-        'battingTeam': battingTeam,
-        'bowlingTeam': bowlingTeam,
-      },
+      MaterialPageRoute(
+        builder: (_) => PreMatchScreen(
+          config: widget.config,
+          tossWinner: widget.tossWinner,
+          decision: selectedDecision!,
+          battingTeam: battingTeam,
+          bowlingTeam: bowlingTeam,
+        ),
+      ),
     );
   }
 

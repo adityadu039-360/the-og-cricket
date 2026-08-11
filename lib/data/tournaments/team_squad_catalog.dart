@@ -1,7 +1,7 @@
-import '../models/cricket_team.dart';
+import '../../models/cricket_player.dart';
 
 class TeamSquadCatalog {
-  static const Map<String, List<CricketPlayer>> squads = {
+  static final Map<String, List<CricketPlayer>> squads = {
     // =========================
     // INDIA
     // =========================
@@ -162,7 +162,6 @@ class TeamSquadCatalog {
     // =========================
     // INDIAN OG LEAGUE
     // =========================
-
     'Chennai Thunderhawks': [
       CricketPlayer(name: 'Ruturaj Gaikwad', role: 'Batter'),
       CricketPlayer(name: 'Devon Conway', role: 'Wicket Keeper'),
@@ -320,7 +319,7 @@ class TeamSquadCatalog {
 
   static List<CricketPlayer> getSquad(String teamName) {
     return List<CricketPlayer>.from(
-      squads[teamName] ?? const [],
+      squads[teamName] ?? const <CricketPlayer>[],
     );
   }
 }

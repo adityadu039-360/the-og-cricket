@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import '../../data/team_squad_catalog.dart';
+import '../../data/tournaments/team_squad_catalog.dart';
+import '../../models/cricket_player.dart';
 
 class SquadSelectionScreen extends StatefulWidget {
   final String teamName;

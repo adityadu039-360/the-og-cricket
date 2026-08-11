@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/match_config.dart';
+import 'bat_bowl_choice_screen.dart';
 
 class TossScreen extends StatefulWidget {
   final MatchConfig config;
@@ -15,47 +16,38 @@ class TossScreen extends StatefulWidget {
 
 class _TossScreenState extends State<TossScreen> {
   String? selectedChoice;
-  String? result;
+  String? tossWinner;
+
   bool tossCompleted = false;
 
   void _performToss() {
     if (selectedChoice == null) return;
 
-    final bool userWins =
+    final bool homeWins =
         DateTime.now().millisecond % 2 == 0;
 
-    final String computerChoice =
-    selectedChoice == 'HEADS'
-        ? 'TAILS'
-        : 'HEADS';
-
     setState(() {
-      if (userWins) {
-        result =
-        '${widget.config.homeTeam} won the toss!';
-      } else {
-        result =
-        '${widget.config.awayTeam} won the toss!';
-      }
+      tossWinner = homeWins
+          ? widget.config.homeTeam
+          : widget.config.awayTeam;
 
       tossCompleted = true;
     });
   }
 
-  void _continueToChoice() {
-    if (!tossCompleted) return;
+  void _continueToDecision() {
+    if (!tossCompleted || tossWinner == null) {
+      return;
+    }
 
-    final bool homeWon =
-        result?.contains(widget.config.homeTeam) ?? false;
-
-    Navigator.pop(
+    Navigator.push(
       context,
-      {
-        'tossWinner': homeWon
-            ? widget.config.homeTeam
-            : widget.config.awayTeam,
-        'tossChoice': selectedChoice,
-      },
+      MaterialPageRoute(
+        builder: (_) => BatBowlChoiceScreen(
+          config: widget.config,
+          tossWinner: tossWinner!,
+        ),
+      ),
     );
   }
 
@@ -203,55 +195,65 @@ class _TossScreenState extends State<TossScreen> {
             ],
           ),
           const SizedBox(height: 25),
-          if (result != null)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0B4A43),
-                borderRadius: BorderRadius.circular(8),
+          if (tossCompleted)
+            _winnerBox(),
+          const SizedBox(height: 22),
+          SizedBox(
+            width: 280,
+            height: 52,
+            child: ElevatedButton.icon(
+              onPressed: selectedChoice == null
+                  ? null
+                  : tossCompleted
+                  ? _continueToDecision
+                  : _performToss,
+              icon: Icon(
+                tossCompleted
+                    ? Icons.arrow_forward
+                    : Icons.casino,
               ),
-              child: Text(
-                result!,
-                textAlign: TextAlign.center,
+              label: Text(
+                tossCompleted
+                    ? 'CONTINUE'
+                    : 'FLIP COIN',
                 style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
                   fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                const Color(0xFFFF6B00),
+                disabledBackgroundColor:
+                const Color(0xFF273847),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.circular(7),
                 ),
               ),
             ),
-          const SizedBox(height: 22),
-          if (!tossCompleted)
-            _actionButton(
-              'FLIP COIN',
-              Icons.casino,
-              _performToss,
-            )
-          else
-            _actionButton(
-              'CONTINUE',
-              Icons.arrow_forward,
-              _continueToChoice,
-            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _choiceButton(String value) {
-    final bool selected = selectedChoice == value;
+    final bool selected =
+        selectedChoice == value;
 
     return GestureDetector(
-      onTap: () {
-        if (tossCompleted) return;
-
+      onTap: tossCompleted
+          ? null
+          : () {
         setState(() {
           selectedChoice = value;
         });
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
+        duration:
+        const Duration(milliseconds: 180),
         width: 130,
         height: 52,
         alignment: Alignment.center,
@@ -259,7 +261,8 @@ class _TossScreenState extends State<TossScreen> {
           color: selected
               ? const Color(0xFFFF6B00)
               : const Color(0xFF172A3B),
-          borderRadius: BorderRadius.circular(7),
+          borderRadius:
+          BorderRadius.circular(7),
           border: Border.all(
             color: selected
                 ? const Color(0xFFFF963D)
@@ -278,35 +281,39 @@ class _TossScreenState extends State<TossScreen> {
     );
   }
 
-  Widget _actionButton(
-      String text,
-      IconData icon,
-      VoidCallback onPressed,
-      ) {
-    return SizedBox(
-      width: 280,
-      height: 52,
-      child: ElevatedButton.icon(
-        onPressed: selectedChoice == null
-            ? null
-            : onPressed,
-        icon: Icon(icon),
-        label: Text(
-          text,
-          style: const TextStyle(
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1,
-          ),
+  Widget _winnerBox() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0B4A43),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: const Color(0xFF00E5D4),
         ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF6B00),
-          disabledBackgroundColor:
-          const Color(0xFF273847),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(7),
+      ),
+      child: Column(
+        children: [
+          const Text(
+            'TOSS RESULT',
+            style: TextStyle(
+              color: Colors.white54,
+              fontSize: 9,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
+            ),
           ),
-        ),
+          const SizedBox(height: 6),
+          Text(
+            '$tossWinner won the toss!',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
       ),
     );
   }
