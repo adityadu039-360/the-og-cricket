@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'squad_selection_screen.dart';
+
+import '../../models/cricket_player.dart';
 import 'quick_play_settings_screen.dart';
+import 'squad_selection_screen.dart';
 
 class TeamSelectionScreen extends StatefulWidget {
   const TeamSelectionScreen({super.key});
@@ -10,8 +12,7 @@ class TeamSelectionScreen extends StatefulWidget {
       _TeamSelectionScreenState();
 }
 
-class _TeamSelectionScreenState
-    extends State<TeamSelectionScreen> {
+class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
   int selectedLeft = 0;
   int selectedRight = 1;
 
@@ -49,9 +50,9 @@ class _TeamSelectionScreenState
   TeamData get rightTeam => currentTeams[selectedRight];
 
   Future<void> _openSquad(bool isLeft) async {
-    final team = isLeft ? leftTeam : rightTeam;
+    final TeamData team = isLeft ? leftTeam : rightTeam;
 
-    await Navigator.push(
+    await Navigator.push<List<CricketPlayer>>(
       context,
       MaterialPageRoute(
         builder: (_) => SquadSelectionScreen(
@@ -168,7 +169,7 @@ class _TeamSelectionScreenState
   }
 
   Widget _categoryButton(String category) {
-    final selected = selectedCategory == category;
+    final bool selected = selectedCategory == category;
 
     return GestureDetector(
       onTap: () {
@@ -314,8 +315,7 @@ class _TeamSelectionScreenState
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor:
-                  const Color(0xFF00E5D4),
+                  foregroundColor: const Color(0xFF00E5D4),
                   side: const BorderSide(
                     color: Color(0xFF00E5D4),
                   ),
@@ -359,10 +359,8 @@ class _TeamSelectionScreenState
               child: LinearProgressIndicator(
                 value: value / 100,
                 minHeight: 6,
-                backgroundColor:
-                const Color(0xFF08121E),
-                valueColor:
-                const AlwaysStoppedAnimation(
+                backgroundColor: const Color(0xFF08121E),
+                valueColor: const AlwaysStoppedAnimation<Color>(
                   Color(0xFF00CFC0),
                 ),
               ),
@@ -409,7 +407,12 @@ class _TeamSelectionScreenState
 
   Widget _continueButton() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 10, 24, 18),
+      padding: const EdgeInsets.fromLTRB(
+        24,
+        10,
+        24,
+        18,
+      ),
       child: SizedBox(
         width: 330,
         height: 50,
@@ -446,30 +449,22 @@ class _TeamSelectionScreenState
     setState(() {
       if (isLeft) {
         selectedLeft =
-            (selectedLeft +
-                direction +
-                currentTeams.length) %
+            (selectedLeft + direction + currentTeams.length) %
                 currentTeams.length;
 
         if (selectedLeft == selectedRight) {
           selectedLeft =
-              (selectedLeft +
-                  direction +
-                  currentTeams.length) %
+              (selectedLeft + direction + currentTeams.length) %
                   currentTeams.length;
         }
       } else {
         selectedRight =
-            (selectedRight +
-                direction +
-                currentTeams.length) %
+            (selectedRight + direction + currentTeams.length) %
                 currentTeams.length;
 
         if (selectedRight == selectedLeft) {
           selectedRight =
-              (selectedRight +
-                  direction +
-                  currentTeams.length) %
+              (selectedRight + direction + currentTeams.length) %
                   currentTeams.length;
         }
       }

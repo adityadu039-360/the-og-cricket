@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../data/tournaments/team_squad_catalog.dart';
 import '../../models/cricket_player.dart';
 
@@ -14,9 +16,9 @@ class SquadSelectionScreen extends StatefulWidget {
       _SquadSelectionScreenState();
 }
 
-class _SquadSelectionScreenState
-    extends State<SquadSelectionScreen> {
+class _SquadSelectionScreenState extends State<SquadSelectionScreen> {
   late List<CricketPlayer> players;
+
   final List<CricketPlayer> selectedPlayers = [];
 
   @override
@@ -41,10 +43,8 @@ class _SquadSelectionScreenState
     setState(() {
       if (selectedPlayers.contains(player)) {
         selectedPlayers.remove(player);
-      } else {
-        if (selectedPlayers.length < 11) {
-          selectedPlayers.add(player);
-        }
+      } else if (selectedPlayers.length < 11) {
+        selectedPlayers.add(player);
       }
     });
   }
@@ -134,13 +134,15 @@ class _SquadSelectionScreenState
   }
 
   Widget _counter() {
+    final bool ready = selectedPlayers.length == 11;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 18,
         vertical: 9,
       ),
       decoration: BoxDecoration(
-        color: selectedPlayers.length == 11
+        color: ready
             ? const Color(0xFF087F73)
             : const Color(0xFF24394B),
         borderRadius: BorderRadius.circular(6),
@@ -239,8 +241,7 @@ class _SquadSelectionScreenState
       CricketPlayer player,
       int index,
       ) {
-    final bool selected =
-    selectedPlayers.contains(player);
+    final bool selected = selectedPlayers.contains(player);
 
     return GestureDetector(
       onTap: () => _togglePlayer(player),
@@ -388,8 +389,7 @@ class _SquadSelectionScreenState
               padding: const EdgeInsets.all(7),
               itemCount: selectedPlayers.length,
               itemBuilder: (context, index) {
-                final player =
-                selectedPlayers[index];
+                final player = selectedPlayers[index];
 
                 return _selectedPlayer(
                   player,
@@ -475,8 +475,7 @@ class _SquadSelectionScreenState
               : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFFF6B00),
-            disabledBackgroundColor:
-            const Color(0xFF263746),
+            disabledBackgroundColor: const Color(0xFF263746),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
