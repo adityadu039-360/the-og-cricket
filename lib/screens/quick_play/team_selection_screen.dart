@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../models/cricket_player.dart';
 import 'quick_play_settings_screen.dart';
 import 'squad_selection_screen.dart';
 
@@ -8,8 +7,7 @@ class TeamSelectionScreen extends StatefulWidget {
   const TeamSelectionScreen({super.key});
 
   @override
-  State<TeamSelectionScreen> createState() =>
-      _TeamSelectionScreenState();
+  State<TeamSelectionScreen> createState() => _TeamSelectionScreenState();
 }
 
 class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
@@ -52,10 +50,10 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
   Future<void> _openSquad(bool isLeft) async {
     final TeamData team = isLeft ? leftTeam : rightTeam;
 
-    await Navigator.push<List<CricketPlayer>>(
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => SquadSelectionScreen(
+        builder: (context) => SquadSelectionScreen(
           teamName: team.name,
         ),
       ),
@@ -66,7 +64,7 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => QuickPlaySettingsScreen(
+        builder: (context) => QuickPlaySettingsScreen(
           homeTeam: leftTeam.name,
           awayTeam: rightTeam.name,
         ),
@@ -194,9 +192,7 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
         child: Text(
           category,
           style: TextStyle(
-            color: selected
-                ? Colors.white
-                : Colors.white60,
+            color: selected ? Colors.white : Colors.white60,
             fontSize: 12,
             fontWeight: FontWeight.w900,
           ),
@@ -212,19 +208,13 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
         child: Row(
           children: [
             Expanded(
-              child: _teamCard(
-                leftTeam,
-                true,
-              ),
+              child: _teamCard(leftTeam, true),
             ),
             const SizedBox(width: 30),
             _vs(),
             const SizedBox(width: 30),
             Expanded(
-              child: _teamCard(
-                rightTeam,
-                false,
-              ),
+              child: _teamCard(rightTeam, false),
             ),
           ],
         ),
@@ -407,12 +397,7 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
 
   Widget _continueButton() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        24,
-        10,
-        24,
-        18,
-      ),
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 18),
       child: SizedBox(
         width: 330,
         height: 50,
