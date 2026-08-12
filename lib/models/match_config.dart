@@ -1,70 +1,36 @@
-import 'package:flutter/foundation.dart';
-
-@immutable
 class MatchConfig {
   final String homeTeam;
   final String awayTeam;
-
+  final String format;
   final int overs;
-
   final String difficulty;
-  final String weather;
-  final String rain;
-  final String ground;
-
-  final List<String> homePlayingXI;
-  final List<String> awayPlayingXI;
+  final String venue;
 
   const MatchConfig({
     required this.homeTeam,
     required this.awayTeam,
+    required this.format,
     required this.overs,
     required this.difficulty,
-    required this.weather,
-    required this.rain,
-    required this.ground,
-    this.homePlayingXI = const [],
-    this.awayPlayingXI = const [],
+    required this.venue,
   });
 
   MatchConfig copyWith({
     String? homeTeam,
     String? awayTeam,
+    String? format,
     int? overs,
     String? difficulty,
-    String? weather,
-    String? rain,
-    String? ground,
-    List<String>? homePlayingXI,
-    List<String>? awayPlayingXI,
+    String? venue,
   }) {
     return MatchConfig(
       homeTeam: homeTeam ?? this.homeTeam,
       awayTeam: awayTeam ?? this.awayTeam,
+      format: format ?? this.format,
       overs: overs ?? this.overs,
       difficulty: difficulty ?? this.difficulty,
-      weather: weather ?? this.weather,
-      rain: rain ?? this.rain,
-      ground: ground ?? this.ground,
-      homePlayingXI:
-      homePlayingXI ?? this.homePlayingXI,
-      awayPlayingXI:
-      awayPlayingXI ?? this.awayPlayingXI,
+      venue: venue ?? this.venue,
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'homeTeam': homeTeam,
-      'awayTeam': awayTeam,
-      'overs': overs,
-      'difficulty': difficulty,
-      'weather': weather,
-      'rain': rain,
-      'ground': ground,
-      'homePlayingXI': homePlayingXI,
-      'awayPlayingXI': awayPlayingXI,
-    };
   }
 
   @override
@@ -72,11 +38,10 @@ class MatchConfig {
     return 'MatchConfig('
         'homeTeam: $homeTeam, '
         'awayTeam: $awayTeam, '
+        'format: $format, '
         'overs: $overs, '
         'difficulty: $difficulty, '
-        'weather: $weather, '
-        'rain: $rain, '
-        'ground: $ground'
+        'venue: $venue'
         ')';
   }
 }
