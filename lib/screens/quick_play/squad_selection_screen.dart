@@ -16,7 +16,8 @@ class SquadSelectionScreen extends StatefulWidget {
       _SquadSelectionScreenState();
 }
 
-class _SquadSelectionScreenState extends State<SquadSelectionScreen> {
+class _SquadSelectionScreenState
+    extends State<SquadSelectionScreen> {
   late List<CricketPlayer> players;
 
   final List<CricketPlayer> selectedPlayers = [];
@@ -389,7 +390,8 @@ class _SquadSelectionScreenState extends State<SquadSelectionScreen> {
               padding: const EdgeInsets.all(7),
               itemCount: selectedPlayers.length,
               itemBuilder: (context, index) {
-                final player = selectedPlayers[index];
+                final CricketPlayer player =
+                selectedPlayers[index];
 
                 return _selectedPlayer(
                   player,
@@ -469,7 +471,7 @@ class _SquadSelectionScreenState extends State<SquadSelectionScreen> {
               ? () {
             Navigator.pop(
               context,
-              selectedPlayers,
+              List<CricketPlayer>.from(selectedPlayers),
             );
           }
               : null,

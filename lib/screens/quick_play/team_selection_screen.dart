@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'quick_play_settings_screen.dart';
+import '../../models/cricket_player.dart';
+import '../../data/tournaments/team_squad_catalog.dart';
 import 'squad_selection_screen.dart';
+import 'quick_play_settings_screen.dart';
 
 class TeamSelectionScreen extends StatefulWidget {
   const TeamSelectionScreen({super.key});
@@ -39,6 +41,16 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
       TeamData('Lucknow Wolfpack', 'LW', '🐺', 83, 86, 85),
       TeamData('Gujarat Titanshield', 'GT', '🦏', 87, 89, 88),
     ],
+    'WORLD CUP': [
+      TeamData('India', 'IND', '🇮🇳', 91, 88, 90),
+      TeamData('Australia', 'AUS', '🇦🇺', 89, 87, 88),
+      TeamData('England', 'ENG', '🏴', 88, 84, 86),
+      TeamData('South Africa', 'SA', '🇿🇦', 86, 89, 87),
+      TeamData('New Zealand', 'NZ', '🇳🇿', 84, 86, 88),
+      TeamData('Pakistan', 'PAK', '🇵🇰', 85, 90, 84),
+      TeamData('Sri Lanka', 'SL', '🇱🇰', 81, 82, 84),
+      TeamData('Bangladesh', 'BAN', '🇧🇩', 78, 80, 79),
+    ],
   };
 
   List<TeamData> get currentTeams => teams[selectedCategory]!;
@@ -50,21 +62,34 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
   Future<void> _openSquad(bool isLeft) async {
     final TeamData team = isLeft ? leftTeam : rightTeam;
 
-    await Navigator.push(
+    final result = await Navigator.push<List<CricketPlayer>>(
       context,
       MaterialPageRoute(
-        builder: (context) => SquadSelectionScreen(
+        builder: (_) => SquadSelectionScreen(
           teamName: team.name,
         ),
       ),
     );
+
+    if (!mounted) return;
+
+    if (result != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${team.name}: Playing XI confirmed',
+          ),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    }
   }
 
   void _openMatchSettings() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => QuickPlaySettingsScreen(
+        builder: (_) => QuickPlaySettingsScreen(
           homeTeam: leftTeam.name,
           awayTeam: rightTeam.name,
         ),
@@ -156,12 +181,17 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
       height: 58,
       padding: const EdgeInsets.symmetric(horizontal: 28),
       color: const Color(0xFF091827),
-      child: Row(
-        children: [
-          _categoryButton('INTERNATIONAL'),
-          const SizedBox(width: 12),
-          _categoryButton('INDIAN OG LEAGUE'),
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _categoryButton('INTERNATIONAL'),
+            const SizedBox(width: 12),
+            _categoryButton('INDIAN OG LEAGUE'),
+            const SizedBox(width: 12),
+            _categoryButton('WORLD CUP'),
+          ],
+        ),
       ),
     );
   }
@@ -206,15 +236,22 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
       child: Padding(
         padding: const EdgeInsets.all(25),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: _teamCard(leftTeam, true),
+              child: _teamCard(
+                leftTeam,
+                true,
+              ),
             ),
             const SizedBox(width: 30),
             _vs(),
             const SizedBox(width: 30),
             Expanded(
-              child: _teamCard(rightTeam, false),
+              child: _teamCard(
+                rightTeam,
+                false,
+              ),
             ),
           ],
         ),
@@ -433,24 +470,28 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
       ) {
     setState(() {
       if (isLeft) {
-        selectedLeft =
-            (selectedLeft + direction + currentTeams.length) %
-                currentTeams.length;
+        selectedLeft = (selectedLeft +
+            direction +
+            currentTeams.length) %
+            currentTeams.length;
 
         if (selectedLeft == selectedRight) {
-          selectedLeft =
-              (selectedLeft + direction + currentTeams.length) %
-                  currentTeams.length;
+          selectedLeft = (selectedLeft +
+              direction +
+              currentTeams.length) %
+              currentTeams.length;
         }
       } else {
-        selectedRight =
-            (selectedRight + direction + currentTeams.length) %
-                currentTeams.length;
+        selectedRight = (selectedRight +
+            direction +
+            currentTeams.length) %
+            currentTeams.length;
 
         if (selectedRight == selectedLeft) {
-          selectedRight =
-              (selectedRight + direction + currentTeams.length) %
-                  currentTeams.length;
+          selectedRight = (selectedRight +
+              direction +
+              currentTeams.length) %
+              currentTeams.length;
         }
       }
     });
