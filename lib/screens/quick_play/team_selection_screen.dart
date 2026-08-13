@@ -4,6 +4,7 @@ import '../../models/cricket_player.dart';
 import '../../data/tournaments/team_squad_catalog.dart';
 import 'squad_selection_screen.dart';
 import 'quick_play_settings_screen.dart';
+import 'quick_play_navigation.dart';
 
 class TeamSelectionScreen extends StatefulWidget {
   const TeamSelectionScreen({super.key});
@@ -86,14 +87,10 @@ class _TeamSelectionScreenState extends State<TeamSelectionScreen> {
   }
 
   void _openMatchSettings() {
-    Navigator.push(
+    QuickPlayNavigation.openSettings(
       context,
-      MaterialPageRoute(
-        builder: (_) => QuickPlaySettingsScreen(
-          homeTeam: leftTeam.name,
-          awayTeam: rightTeam.name,
-        ),
-      ),
+      homeTeam: leftTeam.name,
+      awayTeam: rightTeam.name,
     );
   }
 
